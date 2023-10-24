@@ -6,6 +6,8 @@ import platform
 import subprocess
 import importlib
 from sysconfig import get_paths
+import distutils.sysconfig as sysconfig
+from distutils.sysconfig import get_python_inc
 
 import importlib
 from setuptools import setup, Extension
@@ -35,8 +37,10 @@ class Build(build_ext):
             extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
             info = get_paths()
             include_path = info['include']
-            cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                          '-DPYTHON_INCLUDE_PATH=' + include_path]
+            # cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
+            #               '-DPYTHON_INCLUDE_PATH=' + include_path]
+
+            cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir, '-DPYTHON_INCLUDE_DIR=' + get_python_inc(), '-DPYTHON_LIBRARY=' + sysconfig.get_config_var('LIBDIR')]
 
             cfg = 'Debug' if self.debug else 'Release'
             build_args = ['--config', cfg]
